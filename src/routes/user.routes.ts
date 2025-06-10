@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createUser as createUserInTenant, getUsers as listUsersByTenant, updateUser, deleteUser } from '../controllers/user.controller';
 
-import { authMiddleware, permitRoles } from '../middleware/auth.middleware';
+import { authMiddleware, permitRoles } from '../middlewares/auth.middleware';
 
 const router = Router();
 

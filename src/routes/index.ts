@@ -1,4 +1,8 @@
+// src/routes/index.ts
+
 import { Router } from 'express';
+import { authMiddleware, canManageTenants } from '../middlewares/auth.middleware';
+
 
 // Rotas organizadas por módulos
 import authRoutes from './auth.routes';
@@ -8,10 +12,12 @@ import moduleRoutes from './module.routes';
 
 const router = Router();
 
-// Prefixo comum para todas as rotas da API
-router.use('/auth', authRoutes);         // Login, registro, troca de senha
-router.use('/tenants', tenantRoutes);    // Gestão de tenants
-router.use('/users', userRoutes);        // Gestão de usuários do tenant
-router.use('/modules', moduleRoutes);    // Módulos ativados por segmento/tenant
+// Rotas públicas
+router.use('/auth', authRoutes); // Login, registro
+
+// Rotas protegidas
+router.use('/tenants', authMiddleware, canManageTenants, tenantRoutes); // Apenas master, pro, enterprise
+router.use('/users', authMiddleware, userRoutes);        // Gestão de usuários
+router.use('/modules', authMiddleware, moduleRoutes);    // Módulos por tenant
 
 export default router;

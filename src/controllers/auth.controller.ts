@@ -17,6 +17,7 @@ export const register = async (req: Request, res: Response) => {
     const user = await authService.register(userData);
     res.status(201).json(user);
   } catch (error: any) {
+    console.error('❌ Erro ao criar registrar usuário:', error)
     res.status(400).json({ message: error.message || 'Cadastro falhou' });
   }
 };

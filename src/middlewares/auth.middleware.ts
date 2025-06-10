@@ -1,3 +1,4 @@
+// src/middlewares/authMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -7,7 +8,7 @@ interface JwtPayload {
   role: string;
 }
 
-// Extendendo o tipo do Request pra incluir user
+// Extendendo o tipo do Request para incluir user
 declare global {
   namespace Express {
     interface Request {
@@ -24,6 +25,7 @@ export const authMiddleware = (
   next: NextFunction
 ): void => {
   const authHeader = req.headers.authorization;
+
   if (!authHeader) {
     res.status(401).json({ message: 'Token não fornecido' });
     return;
@@ -45,8 +47,7 @@ export const authMiddleware = (
   }
 };
 
-
-// Middleware para checar roles específicos
+// Middleware para verificar roles permitidos
 export const permitRoles = (...allowedRoles: string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
@@ -63,6 +64,7 @@ export const permitRoles = (...allowedRoles: string[]) => {
   };
 };
 
+// Middleware específico para admin
 export const isAdmin = (req: Request, res: Response, next: NextFunction): void => {
   if (!req.user) {
     res.status(401).json({ message: 'Usuário não autenticado' });
@@ -77,6 +79,8 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction): void =
   next();
 };
 
-
-
+// Middleware para admin ou gerente
 export const isAdminOrManager = permitRoles('admin', 'manager');
+
+// Middleware para master, pro e enterprise (controle de tenants)
+export const canManageTenants = permitRoles('master', 'pro', 'enterprise');

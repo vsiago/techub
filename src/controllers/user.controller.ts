@@ -3,7 +3,7 @@ import * as userService from '../services/user.service';
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.user.tenantId;
+    const tenantId = req.user!.tenantId;
     const users = await userService.getUsersByTenant(tenantId);
     res.json(users);
   } catch (error) {
@@ -13,7 +13,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.user.tenantId;
+    const tenantId = req.user!.tenantId;
     const userData = req.body;
     const newUser = await userService.createUser(tenantId, userData);
     res.status(201).json(newUser);
@@ -24,7 +24,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.user.tenantId;
+    const tenantId = req.user!.tenantId;
     const userId = req.params.id;
     const updateData = req.body;
     const updatedUser = await userService.updateUser(tenantId, userId, updateData);
@@ -36,7 +36,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.user.tenantId;
+    const tenantId = req.user!.tenantId;
     const userId = req.params.id;
     await userService.deleteUser(tenantId, userId);
     res.status(204).send();

@@ -1,13 +1,23 @@
-import TenantModel from '../model/Tenant';
+import TenantModel from '../models/Tenant';
+import { ITenant } from '../types/Tenant';
 
-export const getTenantById = async (tenantId: string) => {
-  const tenant = await TenantModel.findOne({ tenantId }).select('-passwordHash -passwordSalt');
-  if (!tenant) throw new Error('Tenant não encontrado');
-  return tenant;
+export const createTenant = async (data: ITenant) => {
+  const tenant = new TenantModel(data);
+  return await tenant.save();
 };
 
-export const updateTenantById = async (tenantId: string, data: any) => {
-  const tenant = await TenantModel.findOneAndUpdate({ tenantId }, data, { new: true });
-  if (!tenant) throw new Error('Tenant não encontrado');
-  return tenant;
+export const getAllTenants = async () => {
+  return await TenantModel.find();
+};
+
+export const getTenantById = async (id: string) => {
+  return await TenantModel.findById(id);
+};
+
+export const updateTenant = async (id: string, data: Partial<ITenant>) => {
+  return await TenantModel.findByIdAndUpdate(id, data, { new: true });
+};
+
+export const deleteTenant = async (id: string) => {
+  return await TenantModel.findByIdAndDelete(id);
 };

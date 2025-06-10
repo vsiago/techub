@@ -1,4 +1,4 @@
-import UserModel from '../model/User';
+import UserModel from '../models/User';
 import bcrypt from 'bcrypt';
 
 export const getUsersByTenant = async (tenantId: string) => {

@@ -3,7 +3,7 @@ import {
   getEnabledModules,
   updateEnabledModules,
 } from '../controllers/module.controller';
-import { authMiddleware, isAdmin } from '../middleware/auth.middleware';
+import { authMiddleware, isAdmin } from '../middlewares/auth.middleware';
 
 const router = Router();
 

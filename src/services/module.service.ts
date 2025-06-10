@@ -1,4 +1,4 @@
-import TenantModel from '../model/Tenant';
+import TenantModel from '../models/Tenant';
 
 export const getModulesByTenant = async (tenantId: string) => {
   const tenant = await TenantModel.findOne({ tenantId }).select('modulesEnabled');

@@ -1,4 +1,4 @@
-import UserModel from '../model/User';
+import UserModel from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -7,6 +7,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 export const login = async (email: string, password: string) => {
   const user = await UserModel.findOne({ email });
   if (!user) throw new Error('Usuário não encontrado');
+
+  if (!user.passwordHash) {
+    throw new Error('Usuário sem senha cadastrada');
+  }
 
   const validPassword = await bcrypt.compare(password, user.passwordHash);
   if (!validPassword) throw new Error('Senha inválida');
