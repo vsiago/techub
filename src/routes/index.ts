@@ -1,7 +1,7 @@
 // src/routes/index.ts
 
 import { Router } from 'express';
-import { authMiddleware, canManageTenants } from '../middlewares/auth.middleware';
+import { authMiddleware, canManageTenants, isMaster } from '../middlewares/auth.middleware';
 
 
 
@@ -21,6 +21,6 @@ router.use('/auth', authRoutes); // Login, registro
 router.use('/tenants', authMiddleware, canManageTenants, tenantRoutes); // Apenas master, pro, enterprise
 router.use('/users', authMiddleware, userRoutes);        // Gestão de usuários
 router.use('/modules', authMiddleware, moduleRoutes);    // Módulos por tenant
-router.use('/segments', authMiddleware, segmentRoutes);
+router.use('/segments', authMiddleware, isMaster, segmentRoutes);
 
 export default router;

@@ -3,19 +3,24 @@ import * as segmentService from '../services/segment.service';
 
 export const createSegment = async (req: Request, res: Response) => {
   const { name } = req.body;
-  const tenantId = req.user?.tenantId;
+  const user = req.user;  // já reconhecido e tipado como JwtPayload | undefined
 
-  if (!tenantId) {
+  if (!user) {
+    return res.status(401).json({ message: 'Usuário não autenticado' });
+  }
+
+  if (!user.tenantId && user.role !== 'master') {
     return res.status(400).json({ message: 'Tenant ID ausente' });
   }
 
   try {
-    const segment = await segmentService.createSegment(name, tenantId);
+    const segment = await segmentService.createSegment(name, user.tenantId);
     res.status(201).json(segment);
   } catch (error) {
     res.status(500).json({ message: 'Erro ao criar segment', error });
   }
 };
+
 
 export const getAllSegments = async (req: Request, res: Response) => {
   const tenantId = req.user?.tenantId;

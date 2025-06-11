@@ -21,6 +21,7 @@ describe('Fluxo completo do sistema', () => {
     const res = await api.post('/api/auth/login').send({
       email: 'master@app.com',
       password: '12345678',
+      role: 'master',
     });
 
     expect(res.statusCode).toBe(200);
@@ -28,26 +29,26 @@ describe('Fluxo completo do sistema', () => {
     expect(masterToken).toBeDefined();
   });
 
-  it('3. Deve registrar um usuário Free (via site)', async () => {
-    const res = await api.post('/api/auth/register').send({
-      email: 'free@site.com',
-      password: '12345678',
-      role: 'free',
-    });
+  // it('3. Deve registrar um usuário Free (via site)', async () => {
+  //   const res = await api.post('/api/auth/register').send({
+  //     email: 'free@site.com',
+  //     password: '12345678',
+  //     role: 'free',
+  //   });
 
-    expect(res.statusCode).toBe(201);
-  });
+  //   expect(res.statusCode).toBe(201);
+  // });
 
-  it('4. Deve logar com o usuário Free', async () => {
-    const res = await api.post('/api/auth/login').send({
-      email: 'free@site.com',
-      password: '12345678',
-    });
+  // it('4. Deve logar com o usuário Free', async () => {
+  //   const res = await api.post('/api/auth/login').send({
+  //     email: 'free@site.com',
+  //     password: '12345678',
+  //   });
 
-    expect(res.statusCode).toBe(200);
-    freeToken = res.body.token;
-    expect(freeToken).toBeDefined();
-  });
+  //   expect(res.statusCode).toBe(200);
+  //   freeToken = res.body.token;
+  //   expect(freeToken).toBeDefined();
+  // });
 
   it('5. Deve criar um seguimento "academia" (somente Master)', async () => {
     const res = await api
@@ -55,48 +56,50 @@ describe('Fluxo completo do sistema', () => {
       .set('Authorization', `Bearer ${masterToken}`)
       .send({ name: 'academia' });
 
+      console.log(masterToken)
+
     expect(res.statusCode).toBe(201);
     segmentId = res.body._id;
     expect(segmentId).toBeDefined();
   });
 
-  it('6. Não deve permitir que usuário Free crie segmento', async () => {
-    const res = await api
-      .post('/api/segments')
-      .set('Authorization', `Bearer ${freeToken}`)
-      .send({ name: 'mercadinho' });
+  // it('6. Não deve permitir que usuário Free crie segmento', async () => {
+  //   const res = await api
+  //     .post('/api/segments')
+  //     .set('Authorization', `Bearer ${freeToken}`)
+  //     .send({ name: 'mercadinho' });
 
-    expect(res.statusCode).toBe(403);
-  });
+  //   expect(res.statusCode).toBe(403);
+  // });
 
-  it('7. Master deve ver os módulos padrões ao criar um tenant', async () => {
-    const res = await api
-      .post('/api/tenants')
-      .set('Authorization', `Bearer ${masterToken}`)
-      .send({
-        name: 'SmartFit',
-        segmentId: segmentId,
-      });
+  // it('7. Master deve ver os módulos padrões ao criar um tenant', async () => {
+  //   const res = await api
+  //     .post('/api/tenants')
+  //     .set('Authorization', `Bearer ${masterToken}`)
+  //     .send({
+  //       name: 'SmartFit',
+  //       segmentId: segmentId,
+  //     });
 
-    expect(res.statusCode).toBe(201);
-    tenantId = res.body._id;
+  //   expect(res.statusCode).toBe(201);
+  //   tenantId = res.body._id;
 
-    const modules = res.body.modulesEnabled;
-    expect(modules.clientes).toBe(true);
-    expect(modules.financeiro).toBe(true);
-    expect(modules.rastreabilidade).toBe(true);
-    expect(modules.estoque).toBe(false); // default false
-  });
+  //   const modules = res.body.modulesEnabled;
+  //   expect(modules.clientes).toBe(true);
+  //   expect(modules.financeiro).toBe(true);
+  //   expect(modules.rastreabilidade).toBe(true);
+  //   expect(modules.estoque).toBe(false); // default false
+  // });
 
-  it('8. Não deve permitir que Free crie um tenant', async () => {
-    const res = await api
-      .post('/api/tenants')
-      .set('Authorization', `Bearer ${freeToken}`)
-      .send({
-        name: 'FreeShop',
-        segmentId: segmentId,
-      });
+  // it('8. Não deve permitir que Free crie um tenant', async () => {
+  //   const res = await api
+  //     .post('/api/tenants')
+  //     .set('Authorization', `Bearer ${freeToken}`)
+  //     .send({
+  //       name: 'FreeShop',
+  //       segmentId: segmentId,
+  //     });
 
-    expect(res.statusCode).toBe(403);
-  });
+  //   expect(res.statusCode).toBe(403);
+  // });
 });

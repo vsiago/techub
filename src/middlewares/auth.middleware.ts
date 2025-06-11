@@ -1,6 +1,8 @@
 // src/middlewares/authMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 interface JwtPayload {
   userId: string;
@@ -41,8 +43,12 @@ export const authMiddleware = (
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
     req.user = decoded;
+
+    console.log('Token decodificado:', req.user); // Adicionei aqui
+
     next();
   } catch (error) {
+    console.error('Erro ao verificar token:', error); // Adicione este também
     res.status(401).json({ message: 'Token inválido ou expirado' });
   }
 };
@@ -63,6 +69,10 @@ export const permitRoles = (...allowedRoles: string[]) => {
     next();
   };
 };
+
+// Middleware específico para master
+export const isMaster = permitRoles('master');
+
 
 // Middleware específico para admin
 export const isAdmin = (req: Request, res: Response, next: NextFunction): void => {
